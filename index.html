@@ -56,17 +56,15 @@
             <div id="timer" class="text-2xl font-mono font-bold text-blue-500 bg-slate-900 px-3 py-1 rounded-lg border border-slate-800">00:00</div>
         </div>
 
-        <div id="activeExercisesList" class="space-y-6 mb-24">
-            <!-- Exercises with dynamic sets injected here -->
-        </div>
+        <div id="activeExercisesList" class="space-y-6 mb-24"></div>
 
         <button onclick="finishWorkout()" class="fixed bottom-6 left-4 right-4 bg-blue-600 py-4 rounded-2xl font-bold text-lg shadow-2xl active:scale-95 transition-transform">Finish Workout</button>
     </div>
 
-    <!-- CREATE ROUTINE MODAL -->
+    <!-- ROUTINE MODAL (Used for both Create and Edit) -->
     <div id="routineModal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
         <div class="bg-slate-900 w-full max-w-md p-6 rounded-3xl border border-slate-800 shadow-2xl">
-            <h3 class="text-xl font-bold mb-4">Create Routine</h3>
+            <h3 id="modalTitle" class="text-xl font-bold mb-4">Create Routine</h3>
             <input id="routineName" type="text" placeholder="Routine Name (e.g. Push Day)" class="w-full p-4 rounded-xl bg-slate-800 mb-4 outline-none border border-slate-700 focus:border-blue-500 transition-all">
             
             <p class="text-slate-400 text-xs mb-2 uppercase font-bold">Exercises</p>
@@ -104,7 +102,8 @@
         let activeTimer = null;
         let secondsElapsed = 0;
         let currentRoutineId = null;
-        let sessionData = []; // Temporarily holds the sets/reps for the current active workout
+        let editingRoutineId = null; // Track if we are editing
+        let sessionData = [];
 
         function saveData() {
             localStorage.setItem('rings_routines', JSON.stringify(state.routines));
@@ -130,19 +129,40 @@
         }
 
         function openModal(id) { 
+            editingRoutineId = null; // Reset to "Create" mode
+            document.getElementById('modalTitle').innerText = "Create Routine";
+            document.getElementById('routineName').value = "";
+            document.getElementById('exerciseInputs').innerHTML = '';
+            
             document.getElementById(id).classList.remove('hidden'); 
-            if(id === 'routineModal') {
-                document.getElementById('exerciseInputs').innerHTML = '';
-                addExerciseField();
-            }
+            addExerciseField();
         }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        function openEditModal(id) {
+            editingRoutineId = id;
+            const routine = state.routines.find(r => r.id === id);
+            
+            document.getElementById('modalTitle').innerText = "Edit Routine";
+            document.getElementById('routineName').value = routine.name;
+            document.getElementById('exerciseInputs').innerHTML = '';
+            
+            routine.exercises.forEach(ex => addExerciseField(ex.name));
+            document.getElementById('routineModal').classList.remove('hidden');
+        }
+
+        function closeModal(id) { 
+            document.getElementById(id).classList.add('hidden'); 
+            editingRoutineId = null;
+        }
 
         // --- ROUTINE MANAGEMENT ---
-        function addExerciseField() {
+        function addExerciseField(value = "") {
             const div = document.createElement('div');
             div.className = "flex gap-2 exercise-row";
-            div.innerHTML = `<input type="text" placeholder="Exercise Name" class="w-full p-3 rounded-xl bg-slate-800 text-sm outline-none border border-slate-700">`;
+            div.innerHTML = `
+                <input type="text" placeholder="Exercise Name" value="${value}" class="w-full p-3 rounded-xl bg-slate-800 text-sm outline-none border border-slate-700">
+                <button onclick="this.parentElement.remove()" class="text-red-500 px-2 font-bold">✕</button>
+            `;
             document.getElementById('exerciseInputs').appendChild(div);
         }
 
@@ -157,7 +177,15 @@
 
             if(!name) return alert("Please name your routine");
 
-            state.routines.push({ id: Date.now(), name, exercises });
+            if(editingRoutineId) {
+                // UPDATE existing
+                const index = state.routines.findIndex(r => r.id === editingRoutineId);
+                state.routines[index] = { ...state.routines[index], name, exercises };
+            } else {
+                // CREATE new
+                state.routines.push({ id: Date.now(), name, exercises });
+            }
+
             saveData();
             closeModal('routineModal');
             renderRoutines();
@@ -184,7 +212,8 @@
                         </div>
                         <div class="flex gap-2">
                             <button onclick="startWorkout(${r.id})" class="bg-blue-600 p-2 px-5 rounded-xl text-sm font-bold">Start</button>
-                            <button onclick="deleteRoutine(${r.id})" class="bg-slate-800 text-slate-400 p-2 px-5 rounded-xl text-sm">Delete</button>
+                            <button onclick="openEditModal(${r.id})" class="bg-slate-800 text-slate-300 p-2 px-5 rounded-xl text-sm font-bold">Edit</button>
+                            <button onclick="deleteRoutine(${r.id})" class="bg-slate-800 text-red-400 p-2 px-5 rounded-xl text-sm">Delete</button>
                         </div>
                     </div>
                 `;
@@ -197,7 +226,6 @@
             currentRoutineId = id;
             document.getElementById('activeRoutineName').innerText = routine.name;
             
-            // Initialize session data: each exercise starts with 0 sets
             sessionData = routine.exercises.map(ex => ({
                 name: ex.name,
                 sets: []
@@ -259,7 +287,6 @@
         function finishWorkout() {
             clearInterval(activeTimer);
             
-            // Save result to logs
             state.logs.push({
                 date: new Date().toISOString(),
                 duration: secondsElapsed,
@@ -267,11 +294,9 @@
                 data: sessionData
             });
 
-            // PR Logic: check every set of every exercise
             sessionData.forEach(ex => {
                 const name = ex.name;
                 if(!state.prs[name]) state.prs[name] = { weight: 0, reps: 0 };
-                
                 ex.sets.forEach(set => {
                     const w = parseFloat(set.weight) || 0;
                     const r = parseFloat(set.reps) || 0;
