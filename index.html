@@ -6,89 +6,95 @@
     <title>Rings - Workout Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { -webkit-tap-highlight-color: transparent; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { -webkit-tap-highlight-color: transparent; font-family: 'Inter', sans-serif; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     </style>
 </head>
-<body class="bg-slate-900 text-white min-h-screen pb-20">
+<body class="bg-slate-950 text-slate-100 min-h-screen pb-24">
 
     <!-- Header -->
-    <header class="p-6 text-center border-b border-slate-800">
-        <h1 class="text-3xl font-bold tracking-tighter text-blue-400">RINGS</h1>
+    <header class="p-6 text-center border-b border-slate-900 bg-slate-950 sticky top-0 z-40">
+        <h1 class="text-3xl font-black tracking-tighter text-blue-500">RINGS</h1>
     </header>
 
     <!-- WORKOUT TAB -->
     <div id="workout" class="tab-content active p-4">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-semibold">My Routines</h2>
-            <button onclick="openModal('routineModal')" class="bg-blue-600 px-4 py-2 rounded-full text-sm font-bold">+ New Routine</button>
+            <h2 class="text-xl font-bold">My Routines</h2>
+            <button onclick="openModal('routineModal')" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-full text-sm font-bold transition-all">+ New Routine</button>
         </div>
         
         <div id="routinesList" class="space-y-4">
-            <!-- Routines will be injected here -->
+            <!-- Routines injected here -->
         </div>
     </div>
 
     <!-- REPORTS TAB -->
     <div id="reports" class="tab-content p-4">
-        <h2 class="text-xl font-semibold mb-6">Performance Reports</h2>
+        <h2 class="text-xl font-bold mb-6">Performance Reports</h2>
         
-        <div class="grid grid-cols-1 gap-4 mb-8">
-            <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
-                <p class="text-slate-400 text-sm">Past 30 Days Duration</p>
-                <h3 id="totalTime" class="text-4xl font-bold text-blue-400">0m</h3>
-            </div>
+        <div class="bg-slate-900 p-6 rounded-3xl border border-slate-800 mb-8 shadow-xl">
+            <p class="text-slate-400 text-xs uppercase tracking-widest font-semibold">Past 30 Days Duration</p>
+            <h3 id="totalTime" class="text-5xl font-black text-blue-500 mt-1">0m</h3>
         </div>
 
-        <h3 class="text-lg font-medium mb-4 text-slate-300">Personal Records (PRs)</h3>
-        <div id="prList" class="space-y-2">
-            <!-- PRs will be injected here -->
+        <h3 class="text-lg font-bold mb-4 text-slate-300">Personal Records (PRs)</h3>
+        <div id="prList" class="space-y-3">
+            <!-- PRs injected here -->
         </div>
     </div>
 
-    <!-- ACTIVE WORKOUT SCREEN (Overlay) -->
-    <div id="activeWorkoutScreen" class="hidden fixed inset-0 bg-slate-900 z-50 p-4 overflow-y-auto">
-        <div class="flex justify-between items-center mb-6">
-            <h2 id="activeRoutineName" class="text-2xl font-bold">Workout</h2>
-            <div id="timer" class="text-2xl font-mono text-blue-400">00:00</div>
+    <!-- ACTIVE WORKOUT SCREEN -->
+    <div id="activeWorkoutScreen" class="hidden fixed inset-0 bg-slate-950 z-50 p-4 overflow-y-auto">
+        <div class="flex justify-between items-center mb-8 sticky top-0 bg-slate-950 py-4">
+            <div>
+                <h2 id="activeRoutineName" class="text-2xl font-bold">Workout</h2>
+                <p class="text-slate-500 text-sm">Tracking progress...</p>
+            </div>
+            <div id="timer" class="text-2xl font-mono font-bold text-blue-500 bg-slate-900 px-3 py-1 rounded-lg border border-slate-800">00:00</div>
         </div>
-        <div id="activeExercisesList" class="space-y-6"></div>
-        <button onclick="finishWorkout()" class="w-full mt-8 bg-green-600 py-4 rounded-2xl font-bold text-lg">Finish Workout</button>
+
+        <div id="activeExercisesList" class="space-y-6 mb-24">
+            <!-- Exercises with dynamic sets injected here -->
+        </div>
+
+        <button onclick="finishWorkout()" class="fixed bottom-6 left-4 right-4 bg-blue-600 py-4 rounded-2xl font-bold text-lg shadow-2xl active:scale-95 transition-transform">Finish Workout</button>
     </div>
 
     <!-- CREATE ROUTINE MODAL -->
-    <div id="routineModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
-        <div class="bg-slate-800 w-full max-w-md p-6 rounded-3xl border border-slate-700">
+    <div id="routineModal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+        <div class="bg-slate-900 w-full max-w-md p-6 rounded-3xl border border-slate-800 shadow-2xl">
             <h3 class="text-xl font-bold mb-4">Create Routine</h3>
-            <input id="routineName" type="text" placeholder="Routine Name (e.g. Leg Day)" class="w-full p-3 rounded-lg bg-slate-700 mb-4 outline-none border border-slate-600">
+            <input id="routineName" type="text" placeholder="Routine Name (e.g. Push Day)" class="w-full p-4 rounded-xl bg-slate-800 mb-4 outline-none border border-slate-700 focus:border-blue-500 transition-all">
             
-            <div id="exerciseInputs" class="space-y-3 mb-4 max-h-60 overflow-y-auto">
+            <p class="text-slate-400 text-xs mb-2 uppercase font-bold">Exercises</p>
+            <div id="exerciseInputs" class="space-y-2 mb-4 max-h-60 overflow-y-auto">
                 <!-- Exercise rows added here -->
             </div>
             
-            <button onclick="addExerciseField()" class="w-full py-2 text-blue-400 text-sm mb-6">+ Add Exercise</button>
+            <button onclick="addExerciseField()" class="w-full py-3 text-blue-400 text-sm font-bold mb-6 border-2 border-dashed border-slate-700 rounded-xl hover:bg-slate-800 transition-all">+ Add Exercise</button>
             
             <div class="flex gap-3">
-                <button onclick="closeModal('routineModal')" class="flex-1 py-3 rounded-xl bg-slate-700">Cancel</button>
+                <button onclick="closeModal('routineModal')" class="flex-1 py-3 rounded-xl bg-slate-800 font-semibold">Cancel</button>
                 <button onclick="saveRoutine()" class="flex-1 py-3 rounded-xl bg-blue-600 font-bold">Save Routine</button>
             </div>
         </div>
     </div>
 
     <!-- BOTTOM NAVIGATION -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 flex justify-around p-3 pb-6">
-        <button onclick="showTab('workout')" class="flex flex-col items-center text-blue-400 transition-colors" id="nav-workout">
-            <span class="text-xs mt-1 font-medium">Workout</span>
+    <nav class="fixed bottom-0 left-0 right-0 bg-slate-900/80 backdrop-blur-md border-t border-slate-800 flex justify-around p-3 pb-8">
+        <button onclick="showTab('workout')" class="flex flex-col items-center transition-colors" id="nav-workout">
+            <span class="text-xs font-bold uppercase tracking-wider" id="txt-workout">Workout</span>
         </button>
-        <button onclick="showTab('reports')" class="flex flex-col items-center text-slate-400 transition-colors" id="nav-reports">
-            <span class="text-xs mt-1 font-medium">Reports</span>
+        <button onclick="showTab('reports')" class="flex flex-col items-center transition-colors" id="nav-reports">
+            <span class="text-xs font-bold uppercase tracking-wider" id="txt-reports">Reports</span>
         </button>
     </nav>
 
     <script>
-        // --- STATE MANAGEMENT ---
+        // --- STATE ---
         let state = {
             routines: JSON.parse(localStorage.getItem('rings_routines')) || [],
             logs: JSON.parse(localStorage.getItem('rings_logs')) || [],
@@ -98,6 +104,7 @@
         let activeTimer = null;
         let secondsElapsed = 0;
         let currentRoutineId = null;
+        let sessionData = []; // Temporarily holds the sets/reps for the current active workout
 
         function saveData() {
             localStorage.setItem('rings_routines', JSON.stringify(state.routines));
@@ -105,17 +112,21 @@
             localStorage.setItem('rings_prs', JSON.stringify(state.prs));
         }
 
-        // --- NAVIGATION ---
+        // --- UI NAVIGATION ---
         function showTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             
-            document.getElementById('nav-workout').classList.replace('text-blue-400', 'text-slate-400');
-            document.getElementById('nav-reports').classList.replace('text-blue-400', 'text-slate-400');
-            document.getElementById(`nav-${tabId}`).classList.replace('text-slate-400', 'text-blue-400');
+            const navW = document.getElementById('nav-workout');
+            const navR = document.getElementById('nav-reports');
             
-            if(tabId === 'reports') renderReports();
-            if(tabId === 'workout') renderRoutines();
+            if(tabId === 'workout') {
+                navW.classList.add('text-blue-500'); navR.classList.remove('text-blue-500');
+                renderRoutines();
+            } else {
+                navR.classList.add('text-blue-500'); navW.classList.remove('text-blue-500');
+                renderReports();
+            }
         }
 
         function openModal(id) { 
@@ -127,33 +138,21 @@
         }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-        // --- ROUTINE LOGIC ---
+        // --- ROUTINE MANAGEMENT ---
         function addExerciseField() {
             const div = document.createElement('div');
-            div.className = "flex gap-2 mb-2 exercise-row";
-            div.innerHTML = `
-                <input type="text" placeholder="Exercise" class="flex-1 p-2 rounded bg-slate-700 text-sm outline-none">
-                <input type="number" placeholder="Sets" class="w-16 p-2 rounded bg-slate-700 text-sm outline-none">
-                <input type="number" placeholder="Reps" class="w-16 p-2 rounded bg-slate-700 text-sm outline-none">
-            `;
+            div.className = "flex gap-2 exercise-row";
+            div.innerHTML = `<input type="text" placeholder="Exercise Name" class="w-full p-3 rounded-xl bg-slate-800 text-sm outline-none border border-slate-700">`;
             document.getElementById('exerciseInputs').appendChild(div);
         }
 
         function saveRoutine() {
             const name = document.getElementById('routineName').value;
-            const rows = document.querySelectorAll('.exercise-row');
+            const rows = document.querySelectorAll('.exercise-row input');
             const exercises = [];
 
-            rows.forEach(row => {
-                const inputs = row.querySelectorAll('input');
-                if(inputs[0].value) {
-                    exercises.push({
-                        name: inputs[0].value,
-                        sets: inputs[1].value || 0,
-                        reps: inputs[2].value || 0,
-                        weight: 0
-                    });
-                }
+            rows.forEach(input => {
+                if(input.value) exercises.push({ name: input.value });
             });
 
             if(!name) return alert("Please name your routine");
@@ -165,25 +164,27 @@
         }
 
         function deleteRoutine(id) {
-            state.routines = state.routines.filter(r => r.id !== id);
-            saveData();
-            renderRoutines();
+            if(confirm('Delete this routine?')) {
+                state.routines = state.routines.filter(r => r.id !== id);
+                saveData();
+                renderRoutines();
+            }
         }
 
         function renderRoutines() {
             const list = document.getElementById('routinesList');
-            list.innerHTML = state.routines.length ? '' : '<p class="text-center text-slate-500 mt-10">No routines created yet.</p>';
+            list.innerHTML = state.routines.length ? '' : '<p class="text-center text-slate-600 mt-10">No routines yet. Create one to get started!</p>';
             
             state.routines.forEach(r => {
                 list.innerHTML += `
-                    <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700 flex justify-between items-center">
+                    <div class="bg-slate-900 p-5 rounded-3xl border border-slate-800 flex justify-between items-center shadow-sm">
                         <div>
                             <h3 class="font-bold text-lg">${r.name}</h3>
-                            <p class="text-slate-400 text-xs">${r.exercises.length} Exercises</p>
+                            <p class="text-slate-500 text-xs">${r.exercises.length} Exercises</p>
                         </div>
                         <div class="flex gap-2">
-                            <button onclick="startWorkout(${r.id})" class="bg-blue-600 p-2 px-4 rounded-lg text-sm font-bold">Start</button>
-                            <button onclick="deleteRoutine(${r.id})" class="bg-red-900/30 text-red-400 p-2 px-4 rounded-lg text-sm">Delete</button>
+                            <button onclick="startWorkout(${r.id})" class="bg-blue-600 p-2 px-5 rounded-xl text-sm font-bold">Start</button>
+                            <button onclick="deleteRoutine(${r.id})" class="bg-slate-800 text-slate-400 p-2 px-5 rounded-xl text-sm">Delete</button>
                         </div>
                     </div>
                 `;
@@ -196,33 +197,52 @@
             currentRoutineId = id;
             document.getElementById('activeRoutineName').innerText = routine.name;
             
-            const exList = document.getElementById('activeExercisesList');
-            exList.innerHTML = '';
+            // Initialize session data: each exercise starts with 0 sets
+            sessionData = routine.exercises.map(ex => ({
+                name: ex.name,
+                sets: []
+            }));
+
+            renderActiveExercises();
+            document.getElementById('activeWorkoutScreen').classList.remove('hidden');
+            startTimer();
+        }
+
+        function renderActiveExercises() {
+            const list = document.getElementById('activeExercisesList');
+            list.innerHTML = '';
             
-            routine.exercises.forEach((ex, idx) => {
-                exList.innerHTML += `
-                    <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700">
-                        <h4 class="font-bold mb-3 text-blue-300">${ex.name}</h4>
-                        <div class="grid grid-cols-3 gap-2">
-                            <div>
-                                <label class="text-[10px] text-slate-400 uppercase">Sets</label>
-                                <input type="number" data-idx="${idx}" data-field="sets" value="${ex.sets}" class="w-full p-2 rounded bg-slate-700 outline-none workout-input">
-                            </div>
-                            <div>
-                                <label class="text-[10px] text-slate-400 uppercase">Reps</label>
-                                <input type="number" data-idx="${idx}" data-field="reps" value="${ex.reps}" class="w-full p-2 rounded bg-slate-700 outline-none workout-input">
-                            </div>
-                            <div>
-                                <label class="text-[10px] text-slate-400 uppercase">Weight (kg)</label>
-                                <input type="number" data-idx="${idx}" data-field="weight" value="0" class="w-full p-2 rounded bg-slate-700 outline-none workout-input">
-                            </div>
+            sessionData.forEach((ex, exIdx) => {
+                let setsHtml = '';
+                ex.sets.forEach((set, setIdx) => {
+                    setsHtml += `
+                        <div class="grid grid-cols-3 gap-2 mb-2 items-center">
+                            <span class="text-slate-500 text-xs font-bold uppercase">Set ${setIdx + 1}</span>
+                            <input type="number" placeholder="Reps" oninput="updateSet(${exIdx}, ${setIdx}, 'reps', this.value)" value="${set.reps}" class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-center text-sm outline-none focus:border-blue-500">
+                            <input type="number" placeholder="kg" oninput="updateSet(${exIdx}, ${setIdx}, 'weight', this.value)" value="${set.weight}" class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-center text-sm outline-none focus:border-blue-500">
                         </div>
+                    `;
+                });
+
+                list.innerHTML += `
+                    <div class="bg-slate-900 p-5 rounded-3xl border border-slate-800 shadow-lg">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="font-bold text-blue-400">${ex.name}</h4>
+                            <button onclick="addSet(${exIdx})" class="bg-slate-800 text-xs font-bold px-3 py-1 rounded-lg border border-slate-700">+ Add Set</button>
+                        </div>
+                        <div class="space-y-1">${setsHtml || '<p class="text-slate-600 text-xs italic">No sets added yet</p>'}</div>
                     </div>
                 `;
             });
+        }
 
-            document.getElementById('activeWorkoutScreen').classList.remove('hidden');
-            startTimer();
+        function addSet(exIdx) {
+            sessionData[exIdx].sets.push({ reps: '', weight: '' });
+            renderActiveExercises();
+        }
+
+        function updateSet(exIdx, setIdx, field, value) {
+            sessionData[exIdx].sets[setIdx][field] = value;
         }
 
         function startTimer() {
@@ -238,31 +258,26 @@
 
         function finishWorkout() {
             clearInterval(activeTimer);
-            const routine = state.routines.find(r => r.id === currentRoutineId);
-            const inputs = document.querySelectorAll('.workout-input');
-            const results = JSON.parse(JSON.stringify(routine.exercises));
-
-            inputs.forEach(input => {
-                const idx = input.dataset.idx;
-                const field = input.dataset.field;
-                results[idx][field] = parseFloat(input.value) || 0;
-                
-                // PR Logic
-                const exName = results[idx].name;
-                if(!state.prs[exName]) state.prs[exName] = { weight: 0, reps: 0 };
-                
-                if(field === 'weight' && input.value > state.prs[exName].weight) {
-                    state.prs[exName].weight = parseFloat(input.value);
-                }
-                if(field === 'reps' && input.value > state.prs[exName].reps) {
-                    state.prs[exName].reps = parseFloat(input.value);
-                }
-            });
-
+            
+            // Save result to logs
             state.logs.push({
                 date: new Date().toISOString(),
                 duration: secondsElapsed,
-                routineId: currentRoutineId
+                routineId: currentRoutineId,
+                data: sessionData
+            });
+
+            // PR Logic: check every set of every exercise
+            sessionData.forEach(ex => {
+                const name = ex.name;
+                if(!state.prs[name]) state.prs[name] = { weight: 0, reps: 0 };
+                
+                ex.sets.forEach(set => {
+                    const w = parseFloat(set.weight) || 0;
+                    const r = parseFloat(set.reps) || 0;
+                    if(w > state.prs[name].weight) state.prs[name].weight = w;
+                    if(r > state.prs[name].reps) state.prs[name].reps = r;
+                });
             });
 
             saveData();
@@ -270,9 +285,8 @@
             showTab('reports');
         }
 
-        // --- REPORTS LOGIC ---
+        // --- REPORTS ---
         function renderReports() {
-            // Calculate Monthly Time
             const oneMonthAgo = new Date();
             oneMonthAgo.setDate(oneMonthAgo.getDate() - 30);
             
@@ -280,24 +294,25 @@
                 .filter(log => new Date(log.date) > oneMonthAgo)
                 .reduce((acc, curr) => acc + curr.duration, 0);
             
-            const totalMins = Math.floor(monthlySeconds / 60);
-            document.getElementById('totalTime').innerText = `${totalMins}m`;
+            document.getElementById('totalTime').innerText = `${Math.floor(monthlySeconds / 60)}m`;
 
-            // Render PRs
             const prList = document.getElementById('prList');
             prList.innerHTML = '';
             for(const [name, stats] of Object.entries(state.prs)) {
                 prList.innerHTML += `
-                    <div class="flex justify-between p-3 bg-slate-800 rounded-lg border border-slate-700">
-                        <span class="font-medium">${name}</span>
-                        <span class="text-blue-400 font-bold">${stats.weight}kg / ${stats.reps} reps</span>
+                    <div class="flex justify-between p-4 bg-slate-900 rounded-2xl border border-slate-800">
+                        <span class="font-bold text-slate-300">${name}</span>
+                        <span class="text-blue-500 font-black">${stats.weight}kg / ${stats.reps} reps</span>
                     </div>
                 `;
             }
+            if(Object.keys(state.prs).length === 0) {
+                prList.innerHTML = '<p class="text-center text-slate-600 italic">No PRs recorded yet. Go lift!</p>';
+            }
         }
 
-        // Init
-        renderRoutines();
+        // App Start
+        showTab('workout');
     </script>
 </body>
 </html>
