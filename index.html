@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Rings - Workout Tracker</title>
+    <title>ring my ahh - Workout Tracker</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { -webkit-tap-highlight-color: transparent; font-family: 'Inter', sans-serif; }
@@ -16,7 +18,7 @@
 
     <!-- Header -->
     <header class="p-6 text-center border-b border-slate-900 bg-slate-950 sticky top-0 z-40">
-        <h1 class="text-3xl font-black tracking-tighter text-blue-500">RINGS</h1>
+        <h1 class="text-3xl font-black tracking-tighter text-blue-500 uppercase">ring my ahh</h1>
     </header>
 
     <!-- WORKOUT TAB -->
@@ -26,14 +28,15 @@
             <button onclick="openModal('routineModal')" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-full text-sm font-bold transition-all">+ New Routine</button>
         </div>
         
-        <div id="routinesList" class="space-y-4">
-            <!-- Routines injected here -->
-        </div>
+        <div id="routinesList" class="space-y-4"></div>
     </div>
 
     <!-- REPORTS TAB -->
     <div id="reports" class="tab-content p-4">
-        <h2 class="text-xl font-bold mb-6">Performance Reports</h2>
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold">Performance Reports</h2>
+            <button onclick="clearHistory()" class="text-red-500 text-xs font-bold uppercase border border-red-900/50 px-3 py-1 rounded-lg hover:bg-red-900/20 transition-all">Clear History</button>
+        </div>
         
         <div class="bg-slate-900 p-6 rounded-3xl border border-slate-800 mb-8 shadow-xl">
             <p class="text-slate-400 text-xs uppercase tracking-widest font-semibold">Past 30 Days Duration</p>
@@ -41,9 +44,7 @@
         </div>
 
         <h3 class="text-lg font-bold mb-4 text-slate-300">Personal Records (PRs)</h3>
-        <div id="prList" class="space-y-3">
-            <!-- PRs injected here -->
-        </div>
+        <div id="prList" class="space-y-3"></div>
     </div>
 
     <!-- ACTIVE WORKOUT SCREEN -->
@@ -56,24 +57,21 @@
             <div id="timer" class="text-2xl font-mono font-bold text-blue-500 bg-slate-900 px-3 py-1 rounded-lg border border-slate-800">00:00</div>
         </div>
 
-        <div id="activeExercisesList" class="space-y-6 mb-24"></div>
+        <div id="activeExercisesList" class="space-y-6 mb-32"></div>
 
-        <button onclick="finishWorkout()" class="fixed bottom-6 left-4 right-4 bg-blue-600 py-4 rounded-2xl font-bold text-lg shadow-2xl active:scale-95 transition-transform">Finish Workout</button>
+        <div class="fixed bottom-6 left-4 right-4 flex gap-3">
+            <button onclick="cancelWorkout()" class="flex-1 bg-slate-800 py-4 rounded-2xl font-bold text-lg shadow-2xl active:scale-95 transition-transform border border-slate-700">Cancel</button>
+            <button onclick="finishWorkout()" class="flex-[2] bg-blue-600 py-4 rounded-2xl font-bold text-lg shadow-2xl active:scale-95 transition-transform">Finish Workout</button>
+        </div>
     </div>
 
-    <!-- ROUTINE MODAL (Used for both Create and Edit) -->
+    <!-- ROUTINE MODAL -->
     <div id="routineModal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
         <div class="bg-slate-900 w-full max-w-md p-6 rounded-3xl border border-slate-800 shadow-2xl">
             <h3 id="modalTitle" class="text-xl font-bold mb-4">Create Routine</h3>
-            <input id="routineName" type="text" placeholder="Routine Name (e.g. Push Day)" class="w-full p-4 rounded-xl bg-slate-800 mb-4 outline-none border border-slate-700 focus:border-blue-500 transition-all">
-            
-            <p class="text-slate-400 text-xs mb-2 uppercase font-bold">Exercises</p>
-            <div id="exerciseInputs" class="space-y-2 mb-4 max-h-60 overflow-y-auto">
-                <!-- Exercise rows added here -->
-            </div>
-            
+            <input id="routineName" type="text" placeholder="Routine Name" class="w-full p-4 rounded-xl bg-slate-800 mb-4 outline-none border border-slate-700 focus:border-blue-500 transition-all">
+            <div id="exerciseInputs" class="space-y-2 mb-4 max-h-60 overflow-y-auto"></div>
             <button onclick="addExerciseField()" class="w-full py-3 text-blue-400 text-sm font-bold mb-6 border-2 border-dashed border-slate-700 rounded-xl hover:bg-slate-800 transition-all">+ Add Exercise</button>
-            
             <div class="flex gap-3">
                 <button onclick="closeModal('routineModal')" class="flex-1 py-3 rounded-xl bg-slate-800 font-semibold">Cancel</button>
                 <button onclick="saveRoutine()" class="flex-1 py-3 rounded-xl bg-blue-600 font-bold">Save Routine</button>
@@ -84,10 +82,10 @@
     <!-- BOTTOM NAVIGATION -->
     <nav class="fixed bottom-0 left-0 right-0 bg-slate-900/80 backdrop-blur-md border-t border-slate-800 flex justify-around p-3 pb-8">
         <button onclick="showTab('workout')" class="flex flex-col items-center transition-colors" id="nav-workout">
-            <span class="text-xs font-bold uppercase tracking-wider" id="txt-workout">Workout</span>
+            <span class="text-xs font-bold uppercase tracking-wider">Workout</span>
         </button>
         <button onclick="showTab('reports')" class="flex flex-col items-center transition-colors" id="nav-reports">
-            <span class="text-xs font-bold uppercase tracking-wider" id="txt-reports">Reports</span>
+            <span class="text-xs font-bold uppercase tracking-wider">Reports</span>
         </button>
     </nav>
 
@@ -102,7 +100,7 @@
         let activeTimer = null;
         let secondsElapsed = 0;
         let currentRoutineId = null;
-        let editingRoutineId = null; // Track if we are editing
+        let editingRoutineId = null; 
         let sessionData = [];
 
         function saveData() {
@@ -115,10 +113,8 @@
         function showTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-            
             const navW = document.getElementById('nav-workout');
             const navR = document.getElementById('nav-reports');
-            
             if(tabId === 'workout') {
                 navW.classList.add('text-blue-500'); navR.classList.remove('text-blue-500');
                 renderRoutines();
@@ -129,11 +125,10 @@
         }
 
         function openModal(id) { 
-            editingRoutineId = null; // Reset to "Create" mode
+            editingRoutineId = null;
             document.getElementById('modalTitle').innerText = "Create Routine";
             document.getElementById('routineName').value = "";
             document.getElementById('exerciseInputs').innerHTML = '';
-            
             document.getElementById(id).classList.remove('hidden'); 
             addExerciseField();
         }
@@ -141,11 +136,9 @@
         function openEditModal(id) {
             editingRoutineId = id;
             const routine = state.routines.find(r => r.id === id);
-            
             document.getElementById('modalTitle').innerText = "Edit Routine";
             document.getElementById('routineName').value = routine.name;
             document.getElementById('exerciseInputs').innerHTML = '';
-            
             routine.exercises.forEach(ex => addExerciseField(ex.name));
             document.getElementById('routineModal').classList.remove('hidden');
         }
@@ -170,22 +163,14 @@
             const name = document.getElementById('routineName').value;
             const rows = document.querySelectorAll('.exercise-row input');
             const exercises = [];
-
-            rows.forEach(input => {
-                if(input.value) exercises.push({ name: input.value });
-            });
-
+            rows.forEach(input => { if(input.value) exercises.push({ name: input.value }); });
             if(!name) return alert("Please name your routine");
-
             if(editingRoutineId) {
-                // UPDATE existing
                 const index = state.routines.findIndex(r => r.id === editingRoutineId);
                 state.routines[index] = { ...state.routines[index], name, exercises };
             } else {
-                // CREATE new
                 state.routines.push({ id: Date.now(), name, exercises });
             }
-
             saveData();
             closeModal('routineModal');
             renderRoutines();
@@ -201,8 +186,7 @@
 
         function renderRoutines() {
             const list = document.getElementById('routinesList');
-            list.innerHTML = state.routines.length ? '' : '<p class="text-center text-slate-600 mt-10">No routines yet. Create one to get started!</p>';
-            
+            list.innerHTML = state.routines.length ? '' : '<p class="text-center text-slate-600 mt-10">No routines yet.</p>';
             state.routines.forEach(r => {
                 list.innerHTML += `
                     <div class="bg-slate-900 p-5 rounded-3xl border border-slate-800 flex justify-between items-center shadow-sm">
@@ -220,17 +204,12 @@
             });
         }
 
-        // --- ACTIVE WORKOUT LOGIC ---
+        // --- ACTIVE WORKOUT ---
         function startWorkout(id) {
             const routine = state.routines.find(r => r.id === id);
             currentRoutineId = id;
             document.getElementById('activeRoutineName').innerText = routine.name;
-            
-            sessionData = routine.exercises.map(ex => ({
-                name: ex.name,
-                sets: []
-            }));
-
+            sessionData = routine.exercises.map(ex => ({ name: ex.name, sets: [] }));
             renderActiveExercises();
             document.getElementById('activeWorkoutScreen').classList.remove('hidden');
             startTimer();
@@ -239,7 +218,6 @@
         function renderActiveExercises() {
             const list = document.getElementById('activeExercisesList');
             list.innerHTML = '';
-            
             sessionData.forEach((ex, exIdx) => {
                 let setsHtml = '';
                 ex.sets.forEach((set, setIdx) => {
@@ -247,11 +225,10 @@
                         <div class="grid grid-cols-3 gap-2 mb-2 items-center">
                             <span class="text-slate-500 text-xs font-bold uppercase">Set ${setIdx + 1}</span>
                             <input type="number" placeholder="Reps" oninput="updateSet(${exIdx}, ${setIdx}, 'reps', this.value)" value="${set.reps}" class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-center text-sm outline-none focus:border-blue-500">
-                            <input type="number" placeholder="kg" oninput="updateSet(${exIdx}, ${setIdx}, 'weight', this.value)" value="${set.weight}" class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-center text-sm outline-none focus:border-blue-500">
+                            <input type="number" placeholder="kg/sec" oninput="updateSet(${exIdx}, ${setIdx}, 'weight', this.value)" value="${set.weight}" class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-center text-sm outline-none focus:border-blue-500">
                         </div>
                     `;
                 });
-
                 list.innerHTML += `
                     <div class="bg-slate-900 p-5 rounded-3xl border border-slate-800 shadow-lg">
                         <div class="flex justify-between items-center mb-4">
@@ -284,16 +261,17 @@
             }, 1000);
         }
 
+        function cancelWorkout() {
+            if(confirm("Cancel this session? All unsaved progress will be lost.")) {
+                clearInterval(activeTimer);
+                document.getElementById('activeWorkoutScreen').classList.add('hidden');
+                showTab('workout');
+            }
+        }
+
         function finishWorkout() {
             clearInterval(activeTimer);
-            
-            state.logs.push({
-                date: new Date().toISOString(),
-                duration: secondsElapsed,
-                routineId: currentRoutineId,
-                data: sessionData
-            });
-
+            state.logs.push({ date: new Date().toISOString(), duration: secondsElapsed, routineId: currentRoutineId, data: sessionData });
             sessionData.forEach(ex => {
                 const name = ex.name;
                 if(!state.prs[name]) state.prs[name] = { weight: 0, reps: 0 };
@@ -304,39 +282,60 @@
                     if(r > state.prs[name].reps) state.prs[name].reps = r;
                 });
             });
-
             saveData();
             document.getElementById('activeWorkoutScreen').classList.add('hidden');
             showTab('reports');
         }
 
-        // --- REPORTS ---
+        // --- REPORTS & PR MANUAL EDIT ---
+        function editPR(name) {
+            const currentW = state.prs[name].weight;
+            const currentR = state.prs[name].reps;
+            
+            const newW = prompt(`Edit Record Weight/Time for ${name}:`, currentW);
+            if (newW === null) return;
+
+            const newR = prompt(`Edit Record Reps for ${name}:`, currentR);
+            if (newR === null) return;
+
+            state.prs[name] = { weight: parseFloat(newW) || 0, reps: parseFloat(newR) || 0 };
+            saveData();
+            renderReports();
+        }
+
+        function clearHistory() {
+            if(confirm("Clear all workout history and PRs?")) {
+                state.logs = [];
+                state.prs = {};
+                saveData();
+                renderReports();
+            }
+        }
+
         function renderReports() {
             const oneMonthAgo = new Date();
             oneMonthAgo.setDate(oneMonthAgo.getDate() - 30);
-            
-            const monthlySeconds = state.logs
-                .filter(log => new Date(log.date) > oneMonthAgo)
-                .reduce((acc, curr) => acc + curr.duration, 0);
-            
+            const monthlySeconds = state.logs.filter(log => new Date(log.date) > oneMonthAgo).reduce((acc, curr) => acc + curr.duration, 0);
             document.getElementById('totalTime').innerText = `${Math.floor(monthlySeconds / 60)}m`;
 
             const prList = document.getElementById('prList');
             prList.innerHTML = '';
             for(const [name, stats] of Object.entries(state.prs)) {
                 prList.innerHTML += `
-                    <div class="flex justify-between p-4 bg-slate-900 rounded-2xl border border-slate-800">
-                        <span class="font-bold text-slate-300">${name}</span>
-                        <span class="text-blue-500 font-black">${stats.weight}kg / ${stats.reps} reps</span>
+                    <div class="flex justify-between items-center p-4 bg-slate-900 rounded-2xl border border-slate-800">
+                        <div>
+                            <span class="font-bold text-slate-300">${name}</span>
+                            <div class="text-blue-500 font-black text-sm">${stats.weight} (val) / ${stats.reps} (reps)</div>
+                        </div>
+                        <button onclick="editPR('${name}')" class="bg-slate-800 text-slate-400 px-3 py-1 rounded-lg text-xs font-bold uppercase border border-slate-700">Edit PR</button>
                     </div>
                 `;
             }
             if(Object.keys(state.prs).length === 0) {
-                prList.innerHTML = '<p class="text-center text-slate-600 italic">No PRs recorded yet. Go lift!</p>';
+                prList.innerHTML = '<p class="text-center text-slate-600 italic">No PRs recorded yet.</p>';
             }
         }
 
-        // App Start
         showTab('workout');
     </script>
 </body>
