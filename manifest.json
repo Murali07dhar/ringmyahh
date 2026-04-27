@@ -2,7 +2,7 @@
   "name": "ring my ahh - Workout Tracker",
   "short_name": "ring my ahh",
   "description": "Track your workout routines and personal records",
-   "start_url": ".",
+  "start_url": ".",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#3b82f6",
